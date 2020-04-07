@@ -14,9 +14,7 @@ model = keras.Sequential([
     keras.layers.Dense(128, activation='relu'),
     keras.layers.Dense(10)
 ])
-model.compile(optimizer='adam',
-				loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
-				metrics=['accuracy'])
+model.compile(optimizer='adam', loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True), metrics=['accuracy'])
 
 history = model.fit(train_images, train_labels, epochs=10, validation_data=(test_images, test_labels))
 
@@ -47,10 +45,7 @@ def plot_image(i, predictions_array, true_label, img):
 	else:
 		color = 'red'
 
-	plt.xlabel("{} {:2.0f}% ({})".format(predicted_label,
-										100*np.max(predictions_array),
-										true_label),
-										color=color)
+	plt.xlabel("{} {:2.0f}% ({})".format(predicted_label, 100*np.max(predictions_array), true_label), color=color)
 
 def plot_value_array(i, predictions_array, true_label):
 	predictions_array, true_label = predictions_array, true_label[i]
@@ -66,8 +61,7 @@ def plot_value_array(i, predictions_array, true_label):
 
 
 
-probability_model = tf.keras.Sequential([model, 
-										tf.keras.layers.Softmax()])
+probability_model = tf.keras.Sequential([model, tf.keras.layers.Softmax()])
 predictions = probability_model.predict(test_images)
 
 num_rows = 5
