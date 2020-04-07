@@ -4,48 +4,37 @@ from tensorflow import keras
 import numpy as np
 import matplotlib.pyplot as plt
 
-epochs = 10
+(train_images, train_labels), (test_images, test_labels) = tf.keras.datasets.fashion_mnist.load_data()
 
-(train_images, train_labels), (test_images, test_labels) = tf.keras.datasets.mnist.load_data()
+class_names = ['T-shirt/top', 'Trouser', 'Pullover', 'Dress', 'Coat', 'Sandal', 'Shirt', 'Sneaker', 'Bag', 'Ankle boot']
 
 train_images = train_images / 255
 test_images = test_images / 255
 
-train_images = train_images.reshape((train_images.shape[0], 28, 28, 1))
-test_images = test_images.reshape((test_images.shape[0], 28, 28, 1))
-
-datagen = tf.keras.preprocessing.image.ImageDataGenerator(featurewise_center=True, featurewise_std_normalization=True)
-datagen.fit(train_images)
-
 model = keras.Sequential([
-    keras.layers.Flatten(input_shape=(28, 28, 1)),
+    keras.layers.Flatten(input_shape=(28, 28)),
     keras.layers.Dense(128, activation='relu'),
     keras.layers.Dense(10)
 ])
 model.compile(optimizer='adam', loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True), metrics=['accuracy'])
 
-
-print("Training on dataset...")
-history = model.fit(train_images, train_labels, epochs=epochs, validation_data=(test_images, test_labels))
-print("Training on augmented...")
-history2 = model.fit(datagen.flow(train_images, train_labels, batch_size=32), epochs=epochs, validation_data=(test_images, test_labels))
-
+history = model.fit(train_images, train_labels, epochs=10, validation_data=(test_images, test_labels))
 
 test_loss, test_acc = model.evaluate(test_images, test_labels, verbose=2)
 print('\nTest accuracy:', test_acc)
 
 plt.figure(figsize=[8,6])
-plt.plot(np.concatenate((history.history['accuracy'], history2.history['accuracy'])),'r',linewidth=3.0)
-plt.plot(np.concatenate((history.history['val_accuracy'], history2.history['val_accuracy'])),'b',linewidth=3.0)
+plt.plot(history.history['accuracy'],'r',linewidth=3.0)
+plt.plot(history.history['val_accuracy'],'b',linewidth=3.0)
 plt.legend(['Training Accuracy', 'Validation Accuracy'],fontsize=18)
 plt.xlabel('Epochs ',fontsize=16)
 plt.ylabel('Accuracy',fontsize=16)
-plt.title('Accuracy Curves (Training: 0-'+str(epochs)+' -> default, '+str(epochs+1)+'-'+str(epochs*2)+' -> augmented)',fontsize=16)
+plt.title('Accuracy Curves',fontsize=16)
 plt.show()
 
 
 def plot_image(i, predictions_array, true_label, img):
-	predictions_array, true_label, img = predictions_array, true_label[i], img[i].reshape((28, 28))
+	predictions_array, true_label, img = predictions_array, true_label[i], img[i]
 	plt.grid(False)
 	plt.xticks([])
 	plt.yticks([])
@@ -58,7 +47,7 @@ def plot_image(i, predictions_array, true_label, img):
 	else:
 		color = 'red'
 
-	plt.xlabel("{} {:2.0f}% ({})".format(predicted_label, 100*np.max(predictions_array), true_label), color=color)
+	plt.xlabel("{} {:2.0f}% ({})".format(predicted_label, 100*np.max(predictions_array), class_names[true_label]), color=color)
 
 def plot_value_array(i, predictions_array, true_label):
 	predictions_array, true_label = predictions_array, true_label[i]
@@ -77,8 +66,8 @@ def plot_value_array(i, predictions_array, true_label):
 probability_model = tf.keras.Sequential([model, tf.keras.layers.Softmax()])
 predictions = probability_model.predict(test_images)
 
-num_rows = 3
-num_cols = 5
+num_rows = 5
+num_cols = 3
 num_images = num_rows*num_cols
 plt.figure(figsize=(2*2*num_cols, 2*num_rows))
 for i in range(num_images):

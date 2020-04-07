@@ -6,7 +6,9 @@ import matplotlib.pyplot as plt
 
 epochs = 10
 
-(train_images, train_labels), (test_images, test_labels) = tf.keras.datasets.mnist.load_data()
+(train_images, train_labels), (test_images, test_labels) = tf.keras.datasets.fashion_mnist.load_data()
+
+class_names = ['T-shirt/top', 'Trouser', 'Pullover', 'Dress', 'Coat', 'Sandal', 'Shirt', 'Sneaker', 'Bag', 'Ankle boot']
 
 train_images = train_images / 255
 test_images = test_images / 255
@@ -58,7 +60,7 @@ def plot_image(i, predictions_array, true_label, img):
 	else:
 		color = 'red'
 
-	plt.xlabel("{} {:2.0f}% ({})".format(predicted_label, 100*np.max(predictions_array), true_label), color=color)
+	plt.xlabel("{} {:2.0f}% ({})".format(predicted_label, 100*np.max(predictions_array), class_names[true_label]), color=color)
 
 def plot_value_array(i, predictions_array, true_label):
 	predictions_array, true_label = predictions_array, true_label[i]
@@ -77,7 +79,7 @@ def plot_value_array(i, predictions_array, true_label):
 probability_model = tf.keras.Sequential([model, tf.keras.layers.Softmax()])
 predictions = probability_model.predict(test_images)
 
-num_rows = 3
+num_rows = 4
 num_cols = 5
 num_images = num_rows*num_cols
 plt.figure(figsize=(2*2*num_cols, 2*num_rows))
