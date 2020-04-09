@@ -11,6 +11,8 @@ filters = 12
 train_part = 0.8
 
 print("Downloading data...")
+# Positive training data: CelebA Dataset. A large-scale (over 200K images) of celebrity faces. (http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html)
+# Negative training data: ImageNet. Many images across many different categories. We'll take negative examples from a variety of non-human categories. (http://www.image-net.org/)
 path_to_training_data = tf.keras.utils.get_file('train_face.h5', 'https://www.dropbox.com/s/l5iqduhe0gwxumq/train_face.h5?dl=1')
 print("Downloaded data, parsing...")
 
